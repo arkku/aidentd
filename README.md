@@ -96,9 +96,9 @@ running `aidentd`.
 
 Otherwise, the required tools and libraries are:
 
-    * `inetd` (e.g., `openbsd-inetd`)
-    * `conntrack` (only for forwarding)
-    * `libcap` (and `libcap-dev` for compiling)
+* `inetd` (e.g., `openbsd-inetd`)
+* `conntrack` (only for forwarding)
+* `libcap` (and `libcap-dev` for compiling)
 
 Example on Debian:
 
@@ -138,30 +138,30 @@ Add any command-line arguments at the end of the line, e.g., `aidentd -ai`.
 
 The most relevant options are:
 
-    * `-l` – Local results only, i.e., disable forwarding. Use this option on
-      everything that is _not_ a router with masquerading/NAT.
-    * `-f foo` – Reply to any non-forwarded queries with a fixed response.
-      Use this option on routers that are _only_ expected to do forwarding,
-      or hosts where you only even want to give a single response. (As
-      a special case, specifying the response `?` causes the error
-      `HIDDEN-USER` to be sent, which is better for multi-user than a
-      single made-up username.)
-    * `-i` – IP on the connection must match that of the host asking. Enable
-      this option only if all incoming queries come either without NAT,
-      or you also specify the option `-a` and all forwarded NAT queries
-      come from an `aidentd` also having the option `-a` or `-A`.
-    * `-A` — Enable the protocol extension of sending the original IP
-      address when forwarding the request to a host behind NAT. This is
-      non-standard and may cause problems when forwarding to other
-      `identds` behind NAT, but in practice many of them seem to just
-      ignore the extra field and behave as they would without this.
-      This option should be enabled on hosts that forward requests to
-      other `aidentd` (or compatible) instances behind NAT.
-    * `-a` – Enable receiving the original IP address in incoming queries.
-      This is the recipient counterpart to `-A` described above, but has
-      no compatibility implications on its own, since the reply format is
-      unchanged. Without this option hosts behind NAT can not validate
-      the IP address (and have to run without `-i`).
+* `-l` – Local results only, i.e., disable forwarding. Use this option on
+  everything that is _not_ a router with masquerading/NAT.
+* `-f foo` – Reply to any non-forwarded queries with a fixed response.
+  Use this option on routers that are _only_ expected to do forwarding,
+  or hosts where you only even want to give a single response. (As
+  a special case, specifying the response `?` causes the error
+  `HIDDEN-USER` to be sent, which is better for multi-user than a
+  single made-up username.)
+* `-i` – IP on the connection must match that of the host asking. Enable
+  this option only if all incoming queries come either without NAT,
+  or you also specify the option `-a` and all forwarded NAT queries
+  come from an `aidentd` also having the option `-a` or `-A`.
+* `-A` — Enable the protocol extension of sending the original IP
+  address when forwarding the request to a host behind NAT. This is
+  non-standard and may cause problems when forwarding to other
+  `identds` behind NAT, but in practice many of them seem to just
+  ignore the extra field and behave as they would without this.
+  This option should be enabled on hosts that forward requests to
+  other `aidentd` (or compatible) instances behind NAT.
+* `-a` – Enable receiving the original IP address in incoming queries.
+  This is the recipient counterpart to `-A` described above, but has
+  no compatibility implications on its own, since the reply format is
+  unchanged. Without this option hosts behind NAT can not validate
+  the IP address (and have to run without `-i`).
 
 I also recommend using the firewall to limit access to the service only to
 the specific IRC and/or mail servers that you presumably had in mind when
@@ -221,16 +221,16 @@ the up-to-date list from the program itself.
 
 Some of the potentially more useful ones include:
 
-    * `-q` – log less information (can be repeated)
-    * `-v` – log more information (can be repeated)
-    * `-u user` and `-g group` – specify which user and group to drop to
-      when started as `root`.
-    * `-c /path/to/conntrack` – required if your `conntrack` is not at
-      the default `/usr/sbin/conntrack` location.
-    * `-t seconds` – sets the timeout in seconds for forwarded queries, etc.
-      The default is 5 seconds, which is usually plenty with modern LAN
-      and computer speeds, but if your forwards are slow then you may wish
-      to increase this on the router (e.g., `-t 10`).
+* `-q` – log less information (can be repeated)
+* `-v` – log more information (can be repeated)
+* `-u user` and `-g group` – specify which user and group to drop to
+  when started as `root`.
+* `-c /path/to/conntrack` – required if your `conntrack` is not at
+  the default `/usr/sbin/conntrack` location.
+* `-t seconds` – sets the timeout in seconds for forwarded queries, etc.
+  The default is 5 seconds, which is usually plenty with modern LAN
+  and computer speeds, but if your forwards are slow then you may wish
+  to increase this on the router (e.g., `-t 10`).
 
 Future Development
 ==================
