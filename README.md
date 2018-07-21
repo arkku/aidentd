@@ -102,21 +102,21 @@ Otherwise, the required tools and libraries are:
 
 Example on Debian:
 
-    apt-get install build-essential libcap-dev conntrack openbsd-inetd
+    sudo apt-get install build-essential libcap-dev conntrack openbsd-inetd
 
 You may also use another `inetd` if you wish.
 
 Building
 ========
 
-It is suggested to compile with either GCC or clang, simply by running `make`.
-The only build requirement beyond the standard libraries is `libcap-dev`.
+It is suggested to compile with either GCC or clang, simply by running `make`,
+or `make install` which copies the binary to `/usr/local/sbin`. The only build
+requirement beyond the standard libraries is `libcap-dev`.
 
 Example on Debian:
 
     make
-    sudo mkdir -p /usr/local/sbin
-    sudo cp aidentd /usr/local/sbin/
+    sudo make install
 
 Installation
 ============
