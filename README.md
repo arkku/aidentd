@@ -227,7 +227,7 @@ If there seems to be a problem that you can't see in the syslog even with
 `-vv`, you can also try running `aidentd` directly with logging on
 `stderr` (option `-e`), e.g.:
 
-   echo '12345,6667' | sudo ./aidentd -evva
+    echo '12345,6667' | sudo ./aidentd -evva
 
 You can use `conntrack -L -p tcp` to find connections to test with.
 
