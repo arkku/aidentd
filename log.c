@@ -74,7 +74,7 @@ warning(const char * const msg) {
     }
 }
 
-noreturn void
+NORETURN void
 error(const char * const msg) {
     if (log_to_syslog) {
         syslog(LOG_ERR, "ERROR: %s: %s", msg, strerror(errno));

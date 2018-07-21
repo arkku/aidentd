@@ -14,15 +14,15 @@
 #define _DEFAULT_SOURCE
 #endif
 
-#ifndef noreturn
+#ifndef NORETURN
 #if __STDC_VERSION__ >= 201112L
-#define noreturn _Noreturn // C11
+#define NORETURN _Noreturn // C11
 #else
 #ifdef __GNUC__
-#define noreturn __attribute__((noreturn))
+#define NORETURN __attribute__((noreturn))
 #endif
 #endif
-#endif // ifndef noreturn
+#endif // ifndef NORETURN
 
 #include "log.h"
 #include <stdio.h>

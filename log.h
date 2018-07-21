@@ -18,7 +18,7 @@ extern int verbosity;
 
 /// Log an error based on `errno` (as per `perror`) and exit the
 /// program with a failure code.
-noreturn void error(const char * const msg);
+NORETURN void error(const char * const msg);
 
 /// Log a warning based on `errno` (as per `perror`).
 void warning(const char * const msg);

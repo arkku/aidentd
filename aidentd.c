@@ -30,10 +30,10 @@
 #include <grp.h>
 
 const static char * const PROGRAM_NAME = "aidentd";
-const static char * const VERSION_STRING = "1.0";
+const static char * const VERSION_STRING = "1.0.1";
 
 /// Prints the usage to `stderr` and exits.
-noreturn static void
+NORETURN static void
 usage(void) {
     (void) fprintf(stderr,
         "%s %s - Copyright (c) 2018 Kimmo Kulovesi <http://arkku.com/>\n\n"
@@ -92,7 +92,7 @@ gid_for_name(const char * const groupname, const gid_t fallback) {
 static sigjmp_buf timeout_jump;
 
 /// Handle the timeout alarm by jumping out of any sub-queries.
-noreturn static void
+NORETURN static void
 handle_alarm(int sig) {
     siglongjmp(timeout_jump, sig);
 }
