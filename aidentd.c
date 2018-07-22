@@ -30,7 +30,7 @@
 #include <grp.h>
 
 const static char * const PROGRAM_NAME = "aidentd";
-const static char * const VERSION_STRING = "1.0.1";
+const static char * const VERSION_STRING = "1.0.2";
 
 /// Prints the usage to `stderr` and exits.
 NORETURN static void
@@ -100,10 +100,9 @@ handle_alarm(int sig) {
 /// Start the timer for `seconds`.
 static int
 timeout(const unsigned seconds) {
-    struct sigaction sa = {
-        .sa_handler = (handle_alarm),
-        .sa_flags = SA_RESETHAND
-    };
+    struct sigaction sa = { .sa_flags = SA_RESETHAND, .sa_mask = 0 };
+    sa.sa_handler = (handle_alarm);
+
     if (sigaction(SIGALRM, &sa, NULL) < 0) {
         warning("sigaction");
     }
@@ -168,7 +167,7 @@ read_query(FILE * const input, ident_query *query, bool * got_address) {
         *got_address = false;
     }
 
-    if (!fgets(buf, sizeof buf, stdin)) {
+    if (!fgets(buf, sizeof buf, input)) {
         warning("Reading query failed");
         return query;
     }
