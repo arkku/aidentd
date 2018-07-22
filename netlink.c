@@ -166,7 +166,7 @@ check_response(struct inet_diag_msg *msg, const ident_query * const q) {
 }
 
 #define NL_BUF_SIZE 4096
-#define NL_BUF_ALIGN 4
+#define NL_BUF_ALIGN 4 // must be a power of 2, >= 2
 
 /// Read responses to the netlink query from `sockfd`, corresponding to the
 /// sequence number `seq`. Returns the username matching the connection in
@@ -178,15 +178,15 @@ read_responses(const int sockfd, const uint32_t seq, const ident_query * const q
     unsigned char buf[NL_BUF_SIZE + NL_BUF_ALIGN] = { '\0' };
     unsigned char *aligned_buf = buf;
     {
-        const int offset = aligned_buf % NL_BUF_ALIGN;
-        if (offset) {
-            aligned_buf += NL_BUF_ALIGN - offset;
-        }
+        uintptr_t addr = (uintptr_t) aligned_buf;
+        const int offset = addr & (NL_BUF_ALIGN - 1);
+        addr += offset ? (NL_BUF_ALIGN - offset) : 0;
+        aligned_buf = (unsigned char *) addr;
     }
 
     for (;;) {
         ssize_t len = recv(sockfd, aligned_buf, NL_BUF_SIZE, 0);
-        struct nlmsghdr * const nlh = (struct nlmsghdr *) aligned_buf;
+        struct nlmsghdr *nlh = (struct nlmsghdr *) aligned_buf;
 
         if (len < 0) {
             warning("netlink recv");
