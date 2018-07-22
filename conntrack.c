@@ -19,7 +19,7 @@ const char *conntrack_path = "/usr/sbin/conntrack";
 char *
 conntrack(const ident_query * const q) {
     char buf[512];
-    size_t bufsize = sizeof buf;
+    int bufsize = sizeof buf;
 
     forwarding_attempted = false;
 
@@ -81,13 +81,13 @@ conntrack(const ident_query * const q) {
         source = NULL;
 
         p = strstr(lan_side, "sport=");
-        client_port = p ? strtol(p + 6, NULL, 10) : 0;
+        client_port = p ? (unsigned) strtol(p + 6, NULL, 10) : 0;
 
         p = strstr(nat_side, "sport=");
-        const unsigned server_port = p ? strtol(p + 6, NULL, 10) : 0;
+        const unsigned server_port = p ? (unsigned) strtol(p + 6, NULL, 10) : 0;
 
         p = strstr(nat_side, "dport=");
-        const unsigned router_port = p ? strtol(p + 6, NULL, 10) : 0;
+        const unsigned router_port = p ? (unsigned) strtol(p + 6, NULL, 10) : 0;
 
         p = strchr(lan_side + 4, ' ');
         if (p) {
