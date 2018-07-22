@@ -165,6 +165,9 @@ check_response(struct inet_diag_msg *msg, const ident_query * const q) {
     return username;
 }
 
+#define NL_BUF_SIZE 4096
+#define NL_BUF_ALIGN 4
+
 /// Read responses to the netlink query from `sockfd`, corresponding to the
 /// sequence number `seq`. Returns the username matching the connection in
 /// the query `q`, or `NULL` if no match.
@@ -172,17 +175,24 @@ static char *
 read_responses(const int sockfd, const uint32_t seq, const ident_query * const q) {
     debug("NL reading responses...");
 
+    unsigned char buf[NL_BUF_SIZE + NL_BUF_ALIGN] = { '\0' };
+    unsigned char *aligned_buf = buf;
+    {
+        const int offset = aligned_buf % NL_BUF_ALIGN;
+        if (offset) {
+            aligned_buf += NL_BUF_ALIGN - offset;
+        }
+    }
+
     for (;;) {
-        unsigned char buf[4096] = { '\0' };
-        ssize_t len = recv(sockfd, buf, sizeof buf, 0);
+        ssize_t len = recv(sockfd, aligned_buf, NL_BUF_SIZE, 0);
+        struct nlmsghdr * const nlh = (struct nlmsghdr *) aligned_buf;
 
         if (len < 0) {
             warning("netlink recv");
             return NULL;
         }
         debug("NL read %lu bytes", (unsigned long) len);
-
-        struct nlmsghdr *nlh = (struct nlmsghdr *) buf;
 
         if (nlh->nlmsg_seq != seq) {
             debug("NL message seq mismatch: %u, expecting %u", nlh->nlmsg_seq, seq);
