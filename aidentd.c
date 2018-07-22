@@ -100,7 +100,7 @@ handle_alarm(int sig) {
 /// Start the timer for `seconds`.
 static int
 timeout(const unsigned seconds) {
-    struct sigaction sa = { .sa_flags = SA_RESETHAND, .sa_mask = 0 };
+    struct sigaction sa = { .sa_flags = SA_RESETHAND };
     sa.sa_handler = (handle_alarm);
 
     if (sigaction(SIGALRM, &sa, NULL) < 0) {
