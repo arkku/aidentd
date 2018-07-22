@@ -163,8 +163,16 @@ forward_query(const ident_query * const query, const char * const destination) {
                         unblock_timeout();
                     }
                     if (is_error) {
-                        debug("FWD %s gave error: %s", destination, buf);
-                        goto clean_up;
+                        if (strcmp(buf, "USERID") == 0) {
+                            // This happens when forwarding with address to nullidentd
+                            field = FIELD_INFO;
+                            is_error = false;
+                            debug("FWD %s returned an extra field, trying to re-sync",
+                                  destination);
+                        } else {
+                            debug("FWD %s gave error: %s", destination, buf);
+                            goto clean_up;
+                        }
                     } else {
                         debug("FWD received system type: %s", buf);
                     }
