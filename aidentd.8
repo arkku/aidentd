@@ -1,0 +1,213 @@
+.Dd July 22, 2018
+.Dt aidentd 8
+.Os arkku.com
+.Sh NAME
+.Nm aidentd
+.Nd Arkku's Ident Protocol Daemon
+.Sh SYNOPSIS
+.Nm
+.Op Fl i
+.Op Fl A | l
+.OP Fl a
+.Op Fl f Op Ar string | Ar \&? | Ar \&! | Ar \&*
+.Op Fl v | Fl vv
+.Op Fl q | Fl qq
+.Op Fl u Ar user Fl g Ar group | Fl k
+.Op Fl t Ar seconds
+.Op Fl c Pa /path/conntrack
+.Op Fl e
+.Sh DESCRIPTION
+.Nm
+is an Ident protocol
+.Po
+RFC1413
+.Pc
+server with support for forwarding queries to
+masqueraded connections.
+It is intended to be run from
+.Xr inetd 8
+and thus reads the query from stdin and writes the response to stdout,
+with any diagnostic messages logged to
+.Nm syslog .
+Both IPv4 and IPv6 are supported.
+There is also support for a non-standard protocol extension, which allows
+masqueraded hosts to match queries based on the original IP address.
+.Sh CONFIGURATION
+.Nm
+should be set up in
+.Xr inetd.conf 5
+to listen for TCP connections on the
+.Dv ident
+port
+.Po
+113
+.Pc .
+When run on a router that masquerades connections for other hosts and
+forwards queries to them, access to
+.Xr conntrack 8
+is required, which means either inheritable
+.Dv CAP_NET_ADMIN
+or running as root.
+Note that
+.Nm
+only uses the root privileges to set up
+.Nm conntrack
+access, and drops to an unprivileged user by default before it reads any input.
+
+An example configuration for a router masquerading other hosts and
+forwarding queries to them with the original IP address
+.Po
+.Fl A
+.Pc ,
+which it validates
+.Po
+.Fl i
+.Pc ,
+while answering any queries that do not get a forwarded response with
+.Dv HIDDEN-USER
+.Po
+.Fl f Ar \&?
+.Pc :
+.Bd -ragged -offset indent
+ident   stream  tcp4    nowait  root /usr/local/sbin/aidentd aidentd -Aif ?
+.Ed
+
+Another example configuration for a host that does not do forwarding
+.Po
+.Fl l
+.Pc ,
+but supports receiving forwarded queries with the originating IP address
+.Po
+.Fl a
+.Pc :
+.Bd -ragged -offset indent
+ident   stream  tcp4    nowait  nobody /usr/local/sbin/aidentd aidentd -al
+.Ed
+
+The same example host above could also listen for direct IPv6 connections
+.Po
+.Ar tcp6
+.Pc ,
+which it does not masquerade
+.Po
+.Fl l
+.Pc ,
+and matches based on the querying IP address
+.Po
+.Fl i
+.Pc :
+.Bd -ragged -offset indent
+ident   stream  tcp6    nowait  nobody /usr/local/sbin/aidentd aidentd -il
+.Ed
+
+Note that while the forwarding configuration is started as
+.Ar root ,
+the non-forwarding configurations can run as an unprivileged user
+.Po
+.Ar nobody
+.Pc .
+.Sh OPTIONS
+.Bl -tag -width -indent
+.It Fl i
+IP validation: instead of matching only the ports require the destination to have the
+same IP as the client asking for ident.
+This should not be enabled on hosts
+.Em receiving
+forwarded queries
+.Po
+without
+.Fl a
+.Pc .
+.It Fl l
+Only answer queries locally, i.e., disable forwarding.
+This should be set on hosts that do not masquerade others.
+.It Fl A
+Put the original IP address in forwarded requests.
+This is a non-standard protocol extension and may not be compatible with all
+recipients, although in practice most popular options will simply ignore
+the extra argument.
+Any receiving
+.Nm
+must use the option
+.Fl a
+for the forwarded IP address to be actually used.
+.It Fl a
+Accept custom address in incoming queries
+.Po
+see
+.Fl A
+.Pc .
+This allows hosts behind NAT to match forwarded connections using the
+remote IP address, and not just the port pair.
+This option should be set on
+any
+.Nm
+that receives forwarded queries from a router configured with
+.Fl A .
+.It Fl t Ar seconds
+Timeout for the lookup (including forwarding).
+.It Fl u Ar user
+Run as
+.Ar user
+.Po
+usually not needed, since the default is to drop root privileges
+.Pc .
+.It Fl g Ar group
+Run as
+.Ar group
+.Po
+usually not needed, since the default is to drop root privileges
+.Pc .
+.It Fl k
+Keep privileges
+.Po
+e.g., do not change from root to an unprivileged user
+.Pc .
+.It Fl f Ar string
+Return
+.Ar string
+as the fixed response to any locally answered queries
+.Po
+i.e., queries that either do not match any forwarded connections
+to which forwarding does not get a response, such as when the
+masqueraded host does not run an
+.Nm identd
+.Pc .
+.It Fl f Ar \&?
+Respond with the error
+.Dv HIDDEN-USER
+to any locally answered queries.
+.It Fl f Ar \&*
+Respond with the error
+.Dv NO-USER
+to any locally answered queries.
+.It Fl f Ar \&!
+Do not answer locally at all, simply terminate the connection if
+forwarding does not find a matched connection that results in a response
+from the masqueraded host.
+.It Fl c Pa path
+Set a custom path to
+.Nm conntrack
+.Po
+needed for forwarding
+.Pc .
+The default is
+.Pa /usr/sbin/conntrack .
+.It Fl v
+Verbose logging.
+Can be repeated for even more verbosity, as well as logging debug messages at a higher
+.Nm syslog
+priority.
+.It Fl q
+Quieter logging.
+Can be repeated to disable logging for anything but fatal errors.
+.It Fl e
+Log to stderr instead of
+.Nm syslog .
+Note that since
+.Nm inetd
+also sends stderr to the remote host, this will break queries and should
+thus only be used for debugging with interactive queries from the terminal.
+.El
+.Sh AUTHOR
+.An "Kimmo Kulovesi" Aq http://arkku.com
