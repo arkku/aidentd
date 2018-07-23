@@ -53,59 +53,6 @@ Note that
 only uses the root privileges to set up
 .Nm conntrack
 access, and drops to an unprivileged user by default before it reads any input.
-
-An example configuration for a router masquerading other hosts and
-forwarding queries to them with the original IP address
-.Po
-.Fl A
-.Pc ,
-which it validates
-.Po
-.Fl i
-.Pc ,
-while answering any queries that do not get a forwarded response with
-.Dv HIDDEN-USER
-.Po
-.Fl f Ar \&?
-.Pc :
-.Bd -ragged -offset indent
-ident   stream  tcp4    nowait  root /usr/local/sbin/aidentd aidentd -Aif ?
-.Ed
-
-Another example configuration for a host that does not do forwarding
-.Po
-.Fl l
-.Pc ,
-but supports receiving forwarded queries with the originating IP address
-.Po
-.Fl a
-.Pc :
-.Bd -ragged -offset indent
-ident   stream  tcp4    nowait  nobody /usr/local/sbin/aidentd aidentd -al
-.Ed
-
-The same example host above could also listen for direct IPv6 connections
-.Po
-.Ar tcp6
-.Pc ,
-which it does not masquerade
-.Po
-.Fl l
-.Pc ,
-and matches based on the querying IP address
-.Po
-.Fl i
-.Pc :
-.Bd -ragged -offset indent
-ident   stream  tcp6    nowait  nobody /usr/local/sbin/aidentd aidentd -il
-.Ed
-
-Note that while the forwarding configuration is started as
-.Ar root ,
-the non-forwarding configurations can run as an unprivileged user
-.Po
-.Ar nobody
-.Pc .
 .Sh OPTIONS
 .Bl -tag -width -indent
 .It Fl i
@@ -209,5 +156,58 @@ Note that since
 also sends stderr to the remote host, this will break queries and should
 thus only be used for debugging with interactive queries from the terminal.
 .El
+.Sh EXAMPLES
+An example configuration for a router masquerading other hosts and
+forwarding queries to them with the original IP address
+.Po
+.Fl A
+.Pc ,
+which it validates
+.Po
+.Fl i
+.Pc ,
+while answering any queries that do not get a forwarded response with
+.Dv HIDDEN-USER
+.Po
+.Fl f Ar \&?
+.Pc :
+.Bd -ragged -offset indent
+ident   stream  tcp4    nowait  root /usr/local/sbin/aidentd aidentd -Aif ?
+.Ed
+
+Another example configuration for a host that does not do forwarding
+.Po
+.Fl l
+.Pc ,
+but supports receiving forwarded queries with the originating IP address
+.Po
+.Fl a
+.Pc :
+.Bd -ragged -offset indent
+ident   stream  tcp4    nowait  nobody /usr/local/sbin/aidentd aidentd -al
+.Ed
+
+The same example host above could also listen for direct IPv6 connections
+.Po
+.Ar tcp6
+.Pc ,
+which it does not masquerade
+.Po
+.Fl l
+.Pc ,
+and matches based on the querying IP address
+.Po
+.Fl i
+.Pc :
+.Bd -ragged -offset indent
+ident   stream  tcp6    nowait  nobody /usr/local/sbin/aidentd aidentd -il
+.Ed
+
+Note that while the forwarding configuration is started as
+.Ar root ,
+the non-forwarding configurations can run as an unprivileged user
+.Po
+.Ar nobody
+.Pc .
 .Sh AUTHOR
 .An "Kimmo Kulovesi" Aq http://arkku.com
