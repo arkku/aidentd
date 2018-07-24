@@ -1,10 +1,11 @@
 PROGRAM=aidentd
 OBJS=$(PROGRAM).o conntrack.o privileges.o netlink.o log.o forwarding.o
 MAN=$(PROGRAM).8
+MANGZ=$(MAN).gz
 DESTDIR ?= /usr/local
 BINDIR=$(DESTDIR)/sbin
 MANDIR=$(DESTDIR)/share/man/man8
-VERSION = $(shell sed -ne '/VERSION_STRING[ ]*=/ {s/^.*VERSION_STRING[ ]*=[ ]*"\([^"]*\)".*/\1/; p; q}' $(PROGRAM).c)
+VERSION = $(shell sed -ne '/VERSION_STRING[ ]*=/ {s/^.*VERSION_STRING[ ]*=[ ]*"\([^"]*\)".*/\1/; p; q; }' $(PROGRAM).c)
 ARCHIVE_PREFIX=$(PROGRAM)_$(VERSION)
 ARCHIVE=../$(ARCHIVE_PREFIX).orig.tar.gz
 
@@ -35,22 +36,25 @@ $(BINDIR)/$(PROGRAM): $(PROGRAM) $(BINDIR)
 	install $< "$@"
 
 $(BINDIR):
-	mkdir -p $<
+	install -d $<
 
 $(MANDIR):
-	mkdir -p $<
+	install -d $<
 
-$(MANDIR)/$(MAN): $(MAN) $(MANDIR)
+$(MANGZ): $(MAN)
+	gzip -9kc $< >$@
+
+$(MANDIR)/$(MANGZ): $(MANGZ) $(MANDIR)
 	install -m 0644 $< "$@"
 	-mandb
 
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJS) $(MANGZ)
 
 distclean: clean
 	rm -f $(PROGRAM)
 
-install: $(BINDIR)/$(PROGRAM) $(MANDIR)/$(MAN)
+install: $(BINDIR)/$(PROGRAM) $(MANDIR)/$(MANGZ)
 
 $(ARCHIVE): $(wildcard *.c *.h) $(MAN) README.md Makefile
 	git archive --format=tar.gz --prefix=$(ARCHIVE_PREFIX)/ --output=$@ HEAD
