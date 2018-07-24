@@ -1,20 +1,23 @@
-BIN=aidentd
-OBJS=aidentd.o conntrack.o privileges.o netlink.o log.o forwarding.o
-MAN=aidentd.8
-PREFIX=/usr/local
-INSTALL_DIR=$(PREFIX)/sbin
-INSTALL_MAN=$(PREFIX)/share/man/man8
+PROGRAM=aidentd
+OBJS=$(PROGRAM).o conntrack.o privileges.o netlink.o log.o forwarding.o
+MAN=$(PROGRAM).8
+DESTDIR ?= /usr/local
+BINDIR=$(DESTDIR)/sbin
+MANDIR=$(DESTDIR)/share/man/man8
+VERSION = $(shell sed -ne '/VERSION_STRING[ ]*=/ {s/^.*VERSION_STRING[ ]*=[ ]*"\([^"]*\)".*/\1/; p; q}' $(PROGRAM).c)
+ARCHIVE_PREFIX=$(PROGRAM)_$(VERSION)
+ARCHIVE=../$(ARCHIVE_PREFIX).orig.tar.gz
 
 CC = gcc
 CFLAGS = -Wall -pedantic -std=gnu99 -Os
 LDFLAGS = -lcap
 
-all: $(BIN)
+all: $(PROGRAM)
 
-aidentd: $(OBJS)
+$(PROGRAM): $(OBJS)
 	$(CC) -o $@ $(CFLAGS) $+ $(LDFLAGS)
 
-$(OBJS): aidentd.h log.h
+$(OBJS): $(PROGRAM).h log.h
 
 priviliges.o: privileges.c privileges.h conntrack.h
 
@@ -26,18 +29,18 @@ log.o: log.c
 
 forwarding.o: forwarding.c forwarding.h
 
-aidentd.o: aidentd.c conntrack.h privileges.h
+$(PROGRAM).o: $(PROGRAM).c conntrack.h privileges.h
 
-$(INSTALL_DIR)/$(BIN): $(BIN) $(INSTALL_DIR)
+$(BINDIR)/$(PROGRAM): $(PROGRAM) $(BINDIR)
 	install $< "$@"
 
-$(INSTALL_DIR):
+$(BINDIR):
 	mkdir -p $<
 
-$(INSTALL_MAN):
+$(MANDIR):
 	mkdir -p $<
 
-$(INSTALL_MAN)/$(MAN): $(MAN) $(INSTALL_MAN)
+$(MANDIR)/$(MAN): $(MAN) $(MANDIR)
 	install -m 0644 $< "$@"
 	-mandb
 
@@ -45,6 +48,11 @@ clean:
 	rm -f $(OBJS)
 
 distclean: clean
-	rm -f $(BIN)
+	rm -f $(PROGRAM)
 
-install: $(INSTALL_DIR)/$(BIN) $(INSTALL_MAN)/$(MAN)
+install: $(BINDIR)/$(PROGRAM) $(MANDIR)/$(MAN)
+
+$(ARCHIVE): $(wildcard *.c *.h) $(MAN) README.md Makefile
+	git archive --format=tar.gz --prefix=$(ARCHIVE_PREFIX)/ --output=$@ HEAD
+
+archive: $(ARCHIVE)
