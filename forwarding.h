@@ -2,7 +2,7 @@
  * forwarding.h: Forwarding queries to other ident servers.
  * aidentd
  *
- * Copyright (c) 2018 Kimmo Kulovesi, http://arkku.com
+ * Copyright (c) 2018 Kimmo Kulovesi, https://arkku.com
  */
 
 #ifndef AIDENTD_FORWARDING_H

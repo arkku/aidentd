@@ -2,7 +2,7 @@
  * conntrack.h: Connection tracking for forwarding to masqueraded hosts.
  * aidentd
  *
- * Copyright (c) 2018 Kimmo Kulovesi, http://arkku.com
+ * Copyright (c) 2018 Kimmo Kulovesi, https://arkku.com
  */
 
 #ifndef AIDENTD_CONNTRACK_H

@@ -28,7 +28,7 @@ for identifying connections, leading to incompatibilites with current Linux
 kernels. In short, there wasn't an existing one that I both could and would
 run on my EdgeRouter, so I decided to write my own.
 
-~ [Kimmo Kulovesi](http://arkku.com/), 2018-07-21
+~ [Kimmo Kulovesi](https://arkku.com/), 2018-07-21
 
 Protocol Extension
 ==================

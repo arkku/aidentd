@@ -4,7 +4,7 @@
  *
  * See enclosed README and LICENSE.
  *
- * Copyright (c) 2018 Kimmo Kulovesi, http://arkku.com
+ * Copyright (c) 2018 Kimmo Kulovesi, https://arkku.com
  */
 
 #include "aidentd.h"
@@ -36,7 +36,7 @@ const static char * const VERSION_STRING = "1.0.2";
 NORETURN static void
 usage(void) {
     (void) fprintf(stderr,
-        "%s %s - Copyright (c) 2018 Kimmo Kulovesi <http://arkku.com/>\n\n"
+        "%s %s - Copyright (c) 2018 Kimmo Kulovesi <https://arkku.com/>\n\n"
         "Intended to be run by inetd; the query is done on stdin/stdout.\n\n"
         "Options:\n"
         "  -i           IP validation: instead of matching only the ports\n"

@@ -2,7 +2,7 @@
  * netlink.c: Discovering local connections via netlink.
  * aidentd
  *
- * Copyright (c) 2018 Kimmo Kulovesi, http://arkku.com
+ * Copyright (c) 2018 Kimmo Kulovesi, https://arkku.com
  */
 
 #include "netlink.h"

@@ -2,7 +2,7 @@
  * privileges.c: Running with minimal privileges and capabilities.
  * aidentd
  *
- * Copyright (c) 2018 Kimmo Kulovesi, http://arkku.com
+ * Copyright (c) 2018 Kimmo Kulovesi, https://arkku.com
  */
 
 #include "aidentd.h"
