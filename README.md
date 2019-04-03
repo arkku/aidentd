@@ -100,6 +100,7 @@ Beyond Linux, the required tools and libraries are:
 * `inetd` (e.g., `openbsd-inetd`)
 * `conntrack` (only for forwarding)
 * `libcap` (and `libcap-dev` for compiling)
+* `man-db` (only for installing the man page)
 
 Installing requirements on Debian:
 

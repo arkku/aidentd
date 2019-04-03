@@ -36,10 +36,10 @@ $(BINDIR)/$(PROGRAM): $(PROGRAM) $(BINDIR)
 	install $< "$@"
 
 $(BINDIR):
-	install -d $<
+	install -d $@
 
 $(MANDIR):
-	install -d $<
+	install -d $@
 
 $(MANGZ): $(MAN)
 	gzip -9kc $< >$@
